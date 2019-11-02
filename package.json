@@ -1,6 +1,6 @@
 {
   "name": "bypass",
-  "version": 0.1,
+  "version": "0.1",
   "scripts": {
     "pretest": "eslint --ignore-path .gitignore"
   },
