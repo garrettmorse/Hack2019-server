@@ -1,11 +1,28 @@
 {
   "name": "bypass",
-  "version": "0.1",
+  "version": "0.1.0",
+  "description": "A cool project",
+  "README": "See README.md",
+  "license": "GNU General Public License (GPL)",
+  "repository": "https://github.com/garrettmorse/Hack2019.git",
   "scripts": {
     "pretest": "eslint --ignore-path .gitignore"
   },
   "dependencies": {
+    "@azure/cognitiveservices-computervision": "^6.0.0",
+    "azure-cognitiveservices-computervision": "^4.0.0",
+    "bcrypt": "^3.0.6",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.4",
     "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^3.3.3",
+    "monk": "^7.1.1",
+    "ms-rest-azure": "^3.0.0",
+    "multer": "^1.4.2",
+    "path": "^0.12.7",
     "request": "^2.88.0"
   },
   "devDependencies": {
