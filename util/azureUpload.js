@@ -11,6 +11,8 @@ const ApiKeyCredentials = require("@azure/ms-rest-js").ApiKeyCredentials;
 const API = "https://clothingdetector.cognitiveservices.azure.com/";
 const KEY = "ec2576ae25604dc884f427b53bd07eba";
 
+const parseResponse = require("./parseResponse");
+
 const computerVisionTags = async image => {
   //async works to warn computervision that its an async function and has to wait later
   async.series(
@@ -43,7 +45,6 @@ const computerVisionTags = async image => {
   ); //generate computervision object
 
   let describeImagePath = `${image}`;
-  console.log(describeImagePath);
 
   // Analyze URL image for tags
   let tags = (await computerVisionClient.analyzeImageInStream(
@@ -85,7 +86,6 @@ const computerVisionColors = async image => {
   ); //generate computervision object
 
   let describeImagePath = `${image}`;
-  console.log(describeImagePath);
 
   // Analyze URL image for tags
   let colors = (await computerVisionClient.analyzeImageInStream(
@@ -95,16 +95,88 @@ const computerVisionColors = async image => {
   return colors;
 };
 
-const azureUpload = async (image, API, KEY) => {
-  const jsonTags = await computerVisionTags(image);
-  const jsonColors = await computerVisionColors(image);
+const azureUpload = async (image, API, KEY, type) => {
+  try {
+    const jsonTags = await computerVisionTags(image);
+    const jsonColors = await computerVisionColors(image);
+    const casual = {
+      type: "casual",
+      items: [
+        {
+          name: {
+            clothing: "jacket",
+            climate: "mild"
+          }
+        },
+        {
+          name: {
+            clothing: "hoodie",
+            climate: "cold"
+          }
+        },
+        {
+          name: {
+            clothing: "shirt",
+            climate: "hot"
+          }
+        },
+        {
+          name: {
+            clothing: "day dress",
+            climate: "mild"
+          }
+        },
+        {
+          name: {
+            clothing: "cocktail dress",
+            climate: "hot"
+          }
+        },
+        {
+          name: {
+            clothing: "indoor",
+            climate: "mild"
+          }
+        }
+      ]
+    };
+    const formal = {
+      type: "formal",
+      items: [
+        {
+          name: {
+            clothing: "suit",
+            climate: "mild"
+          }
+        },
+        {
+          name: {
+            clothing: "blazer",
+            climate: "mild"
+          }
+        },
+        {
+          name: {
+            clothing: "dress shirt",
+            climate: "mild"
+          }
+        }
+      ]
+    };
+    if (type === "formal") {
+      const apparel = parseResponse(jsonTags, formal);
+      apparel.color = jsonColors.dominantColorForeground;
+      return apparel;
+    } else {
+      let apparel = parseResponse(jsonTags, casual);
+      // const apparel = parseResponse(jsonTags, casual);
+      apparel.color = jsonColors.dominantColorForeground;
 
-  console.log("Boi 1");
-  console.log(jsonTags);
-  console.log("Boi 2");
-  console.log(jsonColors);
-
-  // return json;
+      return apparel;
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 module.exports = azureUpload;

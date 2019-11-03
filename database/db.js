@@ -102,7 +102,6 @@ module.exports.uploadImage = (uri, type) =>
     try {
       const imgData = imageDataURI.decode(uri);
       const imgName = `./data/${imgData.imageType.replace("/", ".")}`;
-      console.log(imgName);
       fs.writeFile(imgName, imgData.dataBase64, "base64", err => {
         if (err) {
           console.log(err);
@@ -111,25 +110,22 @@ module.exports.uploadImage = (uri, type) =>
         }
       });
 
-      let caption = await azureUpload(imgName, API, KEY);
-      /*
-        AZURE SHIT BOI
-        parse out names
-        remove confidence x<.5
-        if highest confidence name is in dict,
-        then insert into DB
-      */
-      const azureData = parseResponse(caption);
+      let apparel = await azureUpload(imgName, API, KEY, type);
+
       const time = Date.now();
+      let timesWorn = 0;
       await clothingCollection.insert({
+        apparel,
         time,
-        uri
-        /*
-        AZURE DATA N SHIT
-        */
+        uri,
+        timesWorn
       });
     } catch (error) {
       response.message = error.message;
       reject(response);
     }
   });
+
+module.exports.getValidList = (climate, type) => {
+  console.log("lol");
+};

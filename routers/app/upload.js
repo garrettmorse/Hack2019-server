@@ -4,23 +4,15 @@ const db = require("../../database/db");
 const path = require("path");
 
 const router = express.Router();
-const handleError = (err, res) => {
-  res
-    .status(500)
-    .contentType("text/plain")
-    .end("Sorry, something went wrong!");
-};
-
-router.get("/", express.static(path.join(__dirname, "../../uploads/")));
 
 router.post("/", (req, res) => {
   let response = {
     success: false,
     msg: ""
   };
-  const imgPath = req.body.type.toLowerCase();
-  if (imgPath === ".jpg" || imgPath === ".png") {
-    db.uploadImage(req.body.uri, imgPath);
+  const imgType = req.body.type.toLowerCase();
+  if (imgType === ".jpg" || imgType === ".png" || imgType === ".jpeg") {
+    db.uploadImage(req.body.uri, imgType);
     response.success = true;
     response.msg = "Image Upload Successful";
     res.status(202).send(JSON.stringify(response));
