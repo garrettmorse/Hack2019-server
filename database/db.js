@@ -172,3 +172,13 @@ module.exports.getValidList = async (username, thisClimate, thisType) => {
   }
   return validArray;
 };
+
+module.exports.dumpClothes = async () => {
+  const clothingArray = await clothingCollection.find({});
+  const validArray = [];
+  clothingArray.forEach(object => {
+    const { uri } = object;
+    validArray.push(uri);
+  });
+  return validArray;
+};

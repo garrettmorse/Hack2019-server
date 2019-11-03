@@ -7,7 +7,7 @@ const loginRouter = require("./db/login");
 // ./db
 
 router.use((req, res, next) => {
-  if (req.url === "./enroll" || req.url === "./recommend") {
+  if (req.url === "/enroll" || req.url === "/recommend") {
     next();
   } else {
     let response = {

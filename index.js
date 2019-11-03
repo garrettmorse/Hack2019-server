@@ -23,6 +23,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/app", appRouter);
+app.use("/db", dbRouter);
 
 server.listen(PORT, "localhost");
 console.log(`Server listening on ${PORT}`);
