@@ -131,12 +131,6 @@ const azureUpload = async (image, API, KEY, type) => {
             clothing: "cocktail dress",
             climate: "hot"
           }
-        },
-        {
-          name: {
-            clothing: "indoor",
-            climate: "mild"
-          }
         }
       ]
     };

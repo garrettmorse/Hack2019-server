@@ -8,7 +8,6 @@ const dbRouter = require("./routers/db");
 // server
 const app = express();
 const server = http.createServer(app);
-
 const PORT = 8080;
 
 app.use(bodyParser.json());
@@ -25,5 +24,8 @@ app.get("/", (req, res) => {
 app.use("/app", appRouter);
 app.use("/db", dbRouter);
 
-server.listen(PORT, "localhost");
-console.log(`Server listening on ${PORT}`);
+server.listen(PORT, () => {
+  address = server.address().address;
+  port = server.address().port;
+  console.log(`Server listening on ${address}:${port}`);
+});

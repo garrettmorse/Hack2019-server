@@ -3,11 +3,12 @@ const router = express.Router();
 
 const enrollRouter = require("./db/enroll");
 const loginRouter = require("./db/login");
+const dumpRouter = require("./db/dump");
 
 // ./db
 
 router.use((req, res, next) => {
-  if (req.url === "/enroll" || req.url === "/recommend") {
+  if (req.url === "/enroll" || req.url === "/login" || req.url === "/dump") {
     next();
   } else {
     let response = {
@@ -24,5 +25,6 @@ router.get("/", (req, res) => {
 
 router.use("/enroll", enrollRouter);
 router.use("/login", loginRouter);
+router.use("/dump", dumpRouter);
 
 module.exports = router;

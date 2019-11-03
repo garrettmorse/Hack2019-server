@@ -3,13 +3,11 @@ const db = require("../../database/db");
 
 const router = express.Router();
 
-router.post("/", (req, res) => {
-  const { username, password } = req.body;
-  console.log(req.body);
-  db.enroll(username, password)
+router.get("/", (req, res) => {
+  response.data = db
+    .dump()
     .then(response => {
-      response.message = "User enrolled!";
-      res.status(202).send(JSON.stringify(response));
+      res.status(200).send(JSON.stringify(response));
     })
     .catch(err => res.status(500).send(JSON.stringify(err)));
 });

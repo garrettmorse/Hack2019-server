@@ -6,7 +6,7 @@ const monk = require("monk");
 const mongo = require("mongodb");
 
 const dbPort = 27017;
-const dbURL = `localhost:${dbPort}/hack2019`;
+const dbURL = `localhost:${dbPort}/Hack2019`;
 const db = monk(dbURL);
 db.then(() => {
   console.log("DB connected to server");
@@ -75,20 +75,15 @@ module.exports.login = (username, password) =>
     };
     try {
       const result = await userCollection.findOne({ username });
-
-      if (result != null && bcrypt.compareSync(password, result.password)) {
-        response.token = jwt.sign(
-          {
-            userID: result._id
-          },
-          "secret"
-        );
+      if (result.password === password) {
         response.success = true;
         response.message = "Login Successful!";
         resolve(response);
       } else {
         response.success = false;
         response.message = "Username or Password incorrect.";
+        console.log(response);
+        resolve(response);
       }
     } catch (error) {
       response.message = error.message;
