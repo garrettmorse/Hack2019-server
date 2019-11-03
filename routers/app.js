@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
-const uploadRoute = require("./app/upload");
-const recommendRoute = require("./app/recommend");
+const uploadRouter = require("./app/upload");
+const recommendRouter = require("./app/recommend");
 
 // ./app
 
@@ -10,7 +10,7 @@ router.use((req, res, next) => {
   if (req.url === "/upload" || req.url === "/recommend") {
     next();
   } else {
-    const response = {
+    let response = {
       success: false,
       msg: "Bad Route"
     };
@@ -22,7 +22,7 @@ router.get("/", (req, res) => {
   res.send("Welcome, my boi");
 });
 
-router.use("/upload", uploadRoute);
-router.use("/recommend", recommendRoute);
+router.use("/upload", uploadRouter);
+router.use("/recommend", recommendRouter);
 
 module.exports = router;

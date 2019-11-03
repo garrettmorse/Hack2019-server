@@ -4,13 +4,14 @@ const db = require("../../database/db");
 
 const router = express.Router();
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   let response = {
     success: false,
     msg: ""
   };
   const temp = req.body.temperature;
-  const type = req.body.type;
+  const style = req.body.style;
+  const user = req.body.username;
   let climate = "";
   if (temp < 50) {
     climate = "cold";
@@ -19,13 +20,13 @@ router.post("/", (req, res) => {
   } else {
     climate = "mild";
   }
-  if (climate) {
+  if (style && user) {
     response.success = true;
-    response.message = "Parameters Valid";
-    db.getValidList(climate, type);
+    response.msg = "Parameters Valid";
+    response.data = await db.getValidList(req.body.username, climate, style);
     res.status(202).send(JSON.stringify(response));
   } else {
-    response.message = "Parameters Invalid";
+    response.msg = "Parameters Invalid";
     res.status(400).send(JSON.stringify(response));
   }
 });

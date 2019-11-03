@@ -1,7 +1,5 @@
 const express = require("express");
-const fs = require("fs");
 const db = require("../../database/db");
-const path = require("path");
 
 const router = express.Router();
 
@@ -10,9 +8,10 @@ router.post("/", (req, res) => {
     success: false,
     msg: ""
   };
+  const { username, uri } = req.body;
   const imgType = req.body.type.toLowerCase();
   if (imgType === ".jpg" || imgType === ".png" || imgType === ".jpeg") {
-    db.uploadImage(req.body.uri, imgType);
+    db.uploadImage(username, uri, imgType);
     response.success = true;
     response.msg = "Image Upload Successful";
     res.status(202).send(JSON.stringify(response));

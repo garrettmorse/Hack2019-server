@@ -5,13 +5,16 @@ const fs = require("fs");
 const monk = require("monk");
 const mongo = require("mongodb");
 
-const dbPort = 27000;
-const dbURL = `localhost:${dbPort}/database`;
+const dbPort = 27017;
+const dbURL = `localhost:${dbPort}/hack2019`;
 const db = monk(dbURL);
+db.then(() => {
+  console.log("DB connected to server");
+});
 const imageDataURI = require("image-data-uri");
 
 const userCollection = db.get("users");
-const clothingCollection = db.get("clothing");
+const clothingCollection = db.get("clothingCollection");
 
 const parseResponse = require("../util/parseResponse");
 const azureUpload = require("../util/azureUpload");
@@ -93,7 +96,7 @@ module.exports.login = (username, password) =>
     }
   });
 
-module.exports.uploadImage = (uri, type) =>
+module.exports.uploadImage = (username, uri, type) =>
   new Promise(async (resolve, reject) => {
     let response = {
       success: false,
@@ -101,7 +104,7 @@ module.exports.uploadImage = (uri, type) =>
     };
     try {
       const imgData = imageDataURI.decode(uri);
-      const imgName = `./data/${imgData.imageType.replace("/", ".")}`;
+      const imgName = `./static/${imgData.imageType.replace("/", ".")}`;
       fs.writeFile(imgName, imgData.dataBase64, "base64", err => {
         if (err) {
           console.log(err);
@@ -113,7 +116,7 @@ module.exports.uploadImage = (uri, type) =>
       let apparel = await azureUpload(imgName, API, KEY, type);
 
       const time = Date.now();
-      let timesWorn = 0;
+      let timesWorn = 1;
       await clothingCollection.insert({
         apparel,
         time,
@@ -126,6 +129,46 @@ module.exports.uploadImage = (uri, type) =>
     }
   });
 
-module.exports.getValidList = (climate, type) => {
-  console.log("lol");
+module.exports.getValidList = async (username, thisClimate, thisType) => {
+  const clothingArray = await clothingCollection.find({});
+  const validArray = [];
+  clothingArray.forEach(object => {
+    const { climate, type } = object.apparel;
+    const { time, uri, timesWorn } = object;
+    const newObj = {
+      time,
+      uri,
+      timesWorn
+    };
+    if (climate === thisClimate && type === thisType) {
+      validArray.push(newObj);
+    }
+  });
+  const tolerance = 2000000000;
+
+  for (i = 0; i < validArray.length - 1; i++) {
+    for (j = 1; j < validArray.length; j++) {
+      validArray.sort(() => {
+        if (Math.abs(validArray[i].time - validArray[j].time) > tolerance) {
+          console.log("worn > time");
+          console.log(`validArray[i:${i}]: ${validArray[i].timesWorn}`);
+          console.log(`validArray[i:${i}]: ${validArray[i].time}`);
+          console.log(`validArray[j:${j}]: ${validArray[j].timesWorn}`);
+          console.log(`validArray[j:${j}]: ${validArray[j].time}`);
+          // worn > time
+          return validArray[i].timesWorn > validArray[j].timesWorn;
+        } else {
+          // worn < time
+          console.log("worn < time");
+          console.log(`validArray[i:${i}]: ${validArray[i].timesWorn}`);
+          console.log(`validArray[i:${i}]: ${validArray[i].time}`);
+          console.log(`validArray[j:${j}]: ${validArray[j].timesWorn}`);
+          console.log(`validArray[j:${j}]: ${validArray[j].time}`);
+
+          return validArray[i].time > validArray[j].time;
+        }
+      });
+    }
+  }
+  return validArray;
 };
