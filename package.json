@@ -23,6 +23,7 @@
     "monk": "^7.1.1",
     "ms-rest-azure": "^3.0.0",
     "multer": "^1.4.2",
+    "package.json": "^2.0.1",
     "path": "^0.12.7",
     "request": "^2.88.0"
   },

@@ -1,2 +1,4 @@
 node_modules
 mongo_data
+.git
+.eslintrc.js
