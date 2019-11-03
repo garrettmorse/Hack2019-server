@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const fs = require("fs");
 
 const monk = require("monk");
 const mongo = require("mongodb");
@@ -7,9 +8,13 @@ const mongo = require("mongodb");
 const dbPort = 27000;
 const dbURL = `localhost:${dbPort}/database`;
 const db = monk(dbURL);
+const imageDataURI = require("image-data-uri");
 
 const userCollection = db.get("users");
 const clothingCollection = db.get("clothing");
+
+const parseResponse = require("../util/parseResponse");
+const azureUpload = require("../util/azureUpload");
 
 const API = "https://clothingdetector.cognitiveservices.azure.com/";
 const KEY = "ec2576ae25604dc884f427b53bd07eba";
@@ -88,13 +93,25 @@ module.exports.login = (username, password) =>
     }
   });
 
-module.exports.uploadImage = (uri, path) =>
+module.exports.uploadImage = (uri, type) =>
   new Promise(async (resolve, reject) => {
     let response = {
       success: false,
       message: ""
     };
     try {
+      const imgData = imageDataURI.decode(uri);
+      const imgName = `./data/${imgData.imageType.replace("/", ".")}`;
+      console.log(imgName);
+      fs.writeFile(imgName, imgData.dataBase64, "base64", err => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("File written");
+        }
+      });
+
+      let caption = await azureUpload(imgName, API, KEY);
       /*
         AZURE SHIT BOI
         parse out names
@@ -102,10 +119,17 @@ module.exports.uploadImage = (uri, path) =>
         if highest confidence name is in dict,
         then insert into DB
       */
+      const azureData = parseResponse(caption);
+      const time = Date.now();
       await clothingCollection.insert({
+        time,
+        uri
         /*
         AZURE DATA N SHIT
         */
       });
-    } catch (error) {}
+    } catch (error) {
+      response.message = error.message;
+      reject(response);
+    }
   });
