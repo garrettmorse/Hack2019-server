@@ -23,5 +23,5 @@ const parseResponse = (tags, items) => {
   return json;
 };
 module.exports = parseResponse;
-
+console.log();
 // we parse out the data we don't want from azure here
