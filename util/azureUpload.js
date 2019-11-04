@@ -8,8 +8,8 @@ const ComputerVisionClient = require("@azure/cognitiveservices-computervision")
   .ComputerVisionClient;
 const ApiKeyCredentials = require("@azure/ms-rest-js").ApiKeyCredentials;
 
-const API = "https://clothingdetector.cognitiveservices.azure.com/";
-const KEY = "ec2576ae25604dc884f427b53bd07eba";
+const API = "REDACTED-API";
+const KEY = "REDACTED-KEY";
 
 const parseResponse = require("./parseResponse");
 
